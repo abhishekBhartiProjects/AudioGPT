@@ -1,0 +1,94 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-parcelize'
+apply plugin: 'kotlin-kapt'
+
+android {
+    namespace 'com.abhishekbharti.audiogpt'
+    compileSdk 33
+
+    buildFeatures {
+        buildConfig = true
+        viewBinding = true
+    }
+
+    defaultConfig {
+        applicationId "com.abhishekbharti.audiogpt"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        debug {
+            try {
+                keyAlias "alias"
+                keyPassword DEBUG_KEYSTORE_PASSWORD
+                storePassword DEBUG_KEYSTORE_PASSWORD
+                storeFile file("../debug.keystore")
+            } catch (ignored) {
+                throw new InvalidUserDataException("You should define DEBUG_KEYSTORE_PASSWORD in gradle.properties.")
+            }
+        }
+
+        release {
+            try {
+                keyAlias "alias"
+                keyPassword RELEASE_KEYSTORE_PASSWORD
+                storePassword RELEASE_KEYSTORE_PASSWORD
+                storeFile file("../release.keystore")
+            } catch (ignored) {
+                throw new InvalidUserDataException("You should define RELEASE_KEYSTORE_PASSWORD in gradle.properties.")
+            }
+        }
+    }
+
+    buildTypes {
+        preprod {
+            minifyEnabled false
+            debuggable true
+            buildConfigField("String", "BASE_URL", "\"" + PREPROD_DOMAIN + "\"")
+        }
+
+        prod {
+            minifyEnabled true
+            debuggable false
+            buildConfigField("String", "BASE_URL", "\"" + PROD_DOMAIN + "\"")
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    //Retrofit
+    api "com.squareup.retrofit2:retrofit:$versions.retrofit"
+    api "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+    api "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+
+    //OkHttp3
+    api "com.squareup.okhttp3:okhttp:$versions.okHttp3"
+    api "com.squareup.okhttp3:logging-interceptor:$versions.okHttp3"
+}
