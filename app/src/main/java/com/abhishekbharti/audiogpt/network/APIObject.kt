@@ -16,7 +16,7 @@ object APIObject {
 
     fun build(): APIInterface {
         val retrofit = Retrofit.Builder()
-//            .baseUrl(BuildConfig.BASE_URL)
+            .baseUrl("https://api.openai.com/")
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient())
@@ -41,8 +41,10 @@ object APIObject {
             val original = chain.request()
             val requestBuilder = original.newBuilder()
             requestBuilder.addHeader(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            requestBuilder.addHeader("Authorization", "")
+            requestBuilder.addHeader("Authorization", "Bearer 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")
 
+            //easy Tuto
+//            requestBuilder.addHeader("Authorization", "Bearer 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")
             if (cacheDuration > 0) {
                 requestBuilder.addHeader("Cache-Control", "public, max-age=$cacheDuration")
             }
